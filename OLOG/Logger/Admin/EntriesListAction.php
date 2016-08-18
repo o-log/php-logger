@@ -50,7 +50,7 @@ class EntriesListAction implements
             [
                 new \OLOG\CRUD\CRUDTableColumn(
                     'user_fullid',
-                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', '')
+                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', EntryEditAction::getUrl('{this->id}'))
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
                     'object_fullid',

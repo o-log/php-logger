@@ -38,8 +38,8 @@ class EntryEditAction
         // находим предыдущую запись лога для этого объекта
 
         $prev_record_id = DBWrapper::readField(
-            self::DB_ID,
-            "SELECT id FROM " . self::DB_TABLE_NAME . " WHERE id < ? AND object_fullid = ? ORDER BY id DESC LIMIT 1",
+            Entry::DB_ID,
+            "SELECT id FROM " . Entry::DB_TABLE_NAME . " WHERE id < ? AND object_fullid = ? ORDER BY id DESC LIMIT 1",
             array($current_record_id, $current_record_obj->getObjectFullid())
         );
 
@@ -144,12 +144,12 @@ class EntryEditAction
 
         return '<dl class="dl-horizontal jumbotron" style="margin-top:20px;padding: 10px;">
 	<dt style="padding: 5px 0;">Имя пользователя</dt>
-	<dd style="padding: 5px 0;">' . $record_obj->getObjectFullid() . '</dd>
+	<dd style="padding: 5px 0;">' . $record_obj->getUserFullid() . '</dd>
     <dt style="padding: 5px 0;">Время изменения</dt>
     <dd style="padding: 5px 0;">' . $record_obj->getCreatedAtTs() . '</dd>
     <dt style="padding: 5px 0;">IP адрес</dt>
     <dd style="padding: 5px 0;">' . $record_obj->getUserIp() . '</dd>
-    <dt style="padding: 5px 0;">Тип изменения</dt>
+    <dt style="padding: 5px 0;">Комментарий</dt>
     <dd style="padding: 5px 0;">' . $record_obj->getComment() . '</dd>
     <dt style="padding: 5px 0;">Идентификатор</dt>
     <dd style="padding: 5px 0;">' . $record_obj->getObjectFullid() . '</dd>
