@@ -1,0 +1,322 @@
+<?php
+
+namespace OLOG\Logger\Admin;
+
+use OLOG\Auth\Operator;
+use OLOG\BT\Layout;
+use OLOG\DB\DBWrapper;
+use OLOG\Exits;
+use OLOG\Logger\Entry;
+use OLOG\Logger\Permissions;
+
+class EntryEditAction
+{
+    static public function getUrl($entry_id = '(\d+)'){
+        return '/admin/logger/entry/' . $entry_id;
+    }
+
+    public function action($entry_id){
+        Exits::exit403If(
+            !Operator::currentOperatorHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS])
+        );
+
+        $html = '';
+
+        $html .= self::renderRecordHead($entry_id);
+        $html .= self::delta($entry_id);
+        $html .= self::renderObjectFields($entry_id);
+
+        Layout::render($html, $this);
+    }
+
+    static public function delta($current_record_id)
+    {
+        $html = '';
+
+        $current_record_obj = Entry::factory($current_record_id);
+
+        // находим предыдущую запись лога для этого объекта
+
+        $prev_record_id = DBWrapper::readField(
+            self::DB_ID,
+            "SELECT id FROM " . self::DB_TABLE_NAME . " WHERE id < ? AND object_fullid = ? ORDER BY id DESC LIMIT 1",
+            array($current_record_id, $current_record_obj->getObjectFullid())
+        );
+
+        if (!$prev_record_id) {
+            return '<div>Предыдущая запись истории для этого объекта не найдена.</div>';
+        }
+
+        $prev_record_obj = Entry::factory($prev_record_id);
+
+        // определение дельты
+
+        $html .= '<h2>Изменения относительно <a href="' . EntryEditAction::getUrl($prev_record_id) . '">предыдущей версии</a></h2>';
+
+        $current_obj = unserialize($current_record_obj->getSerializedObject());
+        $prev_obj = unserialize($prev_record_obj->getSerializedObject());
+
+        $current_record_as_list = self::convertValueToList($current_obj);
+        ksort($current_record_as_list); // сортируем для красоты
+        $prev_record_as_list = self::convertValueToList($prev_obj);
+        ksort($prev_record_as_list); // сортируем для красоты
+
+        $html .= '<table class="table">';
+        $html .= '<thead>';
+        $html .= '<tr>';
+        $html .= '<th>Поле</th>';
+        $html .= '<th>Старое значение</th>';
+        $html .= '<th>Новое значение</th>';
+        $html .= '</tr>';
+        $html .= '</thead>';
+
+        $added_rows = array_diff_key($current_record_as_list, $prev_record_as_list);
+
+        foreach ($added_rows as $k => $v) {
+            $html .= '<tr>';
+            $html .= '<td><b>' . $k . '</b></td>';
+            $html .= '<td style="background-color: #eee;"></td>';
+            $html .= '<td>' . self::renderDeltaValue($v) . '</td>';
+            $html .= '</tr>';
+        }
+
+        $deleted_rows = array_diff_key($prev_record_as_list, $current_record_as_list);
+
+        foreach ($deleted_rows as $k => $v) {
+            $html .= '<tr>';
+            $html .= '<td><b>' . $k . '</b></td>';
+            $html .= '<td>' . self::renderDeltaValue($v) . '</td>';
+            $html .= '<td style="background-color: #eee;"></td>';
+            $html .= '</tr>';
+        }
+
+        foreach ($current_record_as_list as $k => $current_v) {
+            if (array_key_exists($k, $prev_record_as_list)) {
+                $prev_v = $prev_record_as_list[$k];
+                if ($current_v != $prev_v) {
+                    $html .= '<tr>';
+                    $html .= '<td><b>' . $k . '</b></td>';
+                    $html .= '<td>' . self::renderDeltaValue($prev_v) . '</td>';
+                    $html .= '<td>' . self::renderDeltaValue($current_v) . '</td>';
+                    $html .= '</tr>';
+                }
+            }
+        }
+
+        $html .= '</table>';
+
+        $html .= '<div>Для длинных значений полный текст здесь не приведен, его можно увидеть в полях объекта ниже.</div>';
+
+        return $html;
+    }
+
+    static public function renderDeltaValue($v)
+    {
+        $limit = 300;
+
+        if (strlen($v) < $limit) {
+            return $v;
+        }
+
+        return mb_substr($v, 0, $limit) . '...';
+    }
+
+    static public function renderRecordHead($record_id)
+    {
+        $record_obj = Entry::factory($record_id);
+
+        /*
+        $record_obj = \Sportbox\DB\DBWrapper::readObject(
+            \Sportbox\Logger\Logger::DB_ID,
+            "SELECT user_fullid, ts, ip, action, entity_id, object FROM " . \Sportbox\Logger\Logger::DB_TABLE_NAME . " WHERE id = ?",
+            array($record_id)
+        );
+
+        $username = '';
+
+        if ($record_obj->user_fullid) {
+            $user_obj = \Sportbox\Factory\Factory2::loadObjectByFullId($record_obj->user_fullid);
+            if ($user_obj instanceof \Sportbox\Model\InterfaceGetTitle) {
+                $username = $user_obj->getTitle();
+            }
+        }
+        */
+
+        return '<dl class="dl-horizontal jumbotron" style="margin-top:20px;padding: 10px;">
+	<dt style="padding: 5px 0;">Имя пользователя</dt>
+	<dd style="padding: 5px 0;">' . $record_obj->getObjectFullid() . '</dd>
+    <dt style="padding: 5px 0;">Время изменения</dt>
+    <dd style="padding: 5px 0;">' . $record_obj->getCreatedAtTs() . '</dd>
+    <dt style="padding: 5px 0;">IP адрес</dt>
+    <dd style="padding: 5px 0;">' . $record_obj->getUserIp() . '</dd>
+    <dt style="padding: 5px 0;">Тип изменения</dt>
+    <dd style="padding: 5px 0;">' . $record_obj->getComment() . '</dd>
+    <dt style="padding: 5px 0;">Идентификатор</dt>
+    <dd style="padding: 5px 0;">' . $record_obj->getObjectFullid() . '</dd>
+</dl>
+   ';
+    }
+
+    static public function renderObjectFields($record_id)
+    {
+        $html = '<h2>Все поля объекта</h2>';
+
+        $record_obj = Entry::factory($record_id);
+
+        /*
+        $logger_objs_arr = \Sportbox\DB\DBWrapper::readObject(
+            \Sportbox\Logger\Logger::DB_ID,
+            "SELECT user_id, ts, ip, action, entity_id, object FROM " . \Sportbox\Logger\Logger::DB_TABLE_NAME . " WHERE id = ?",
+            array($record_id)
+        );
+        */
+
+        $record_objs = unserialize($record_obj->getSerializedObject());
+
+        $value_as_list = self::convertValueToList($record_objs);
+        ksort($value_as_list); // сортируем для красоты
+
+        //$html .= '<table class="table">';
+        $last_path = '';
+
+        foreach ($value_as_list as $path => $value) {
+            $path_to_display = $path;
+
+            if (self::getPathWithoutLastElement($last_path) == self::getPathWithoutLastElement($path)) {
+                $elems = explode('.', $path);
+                $last_elem = array_pop($elems);
+                if (count($elems)) {
+                    $path_to_display = '<span style="color: #999">' . implode('.', $elems) . '</span>.' . $last_elem;
+                }
+            }
+
+            /*
+            $html .= '<tr>';
+            $html .= '<td>' . $path_to_display . '</td>';
+            $html .= '<td><pre style="white-space: pre-wrap;">' . $value . '</pre></td>';
+            $html .= '</tr>';
+            */
+
+            if (strlen($value) > 100){
+                $html .= '<div style="padding: 5px 0px; border-bottom: 1px solid #ddd;">';
+
+                $html .= '<div><b>' . $path_to_display . '</b></div>';
+                $html .= '<div><pre style="white-space: pre-wrap;">' . $value . '</pre></div>';
+                $html .= '</div>';
+            } else {
+                $html .= '<div style="padding: 5px 0px; border-bottom: 1px solid #ddd;">';
+
+                $html .= '<span style="padding-right: 50px;"><b>' . $path_to_display . '</b></span>';
+                $html .= $value;
+                $html .= '</div>';
+            }
+
+
+            $last_path = $path;
+        }
+        //$html .= '</table>';
+
+        return $html;
+    }
+
+    static public function convertValueToList($value_value, $value_path = '')
+    {
+        if (is_null($value_value)) {
+            return array($value_path => '#NULL#');
+        }
+
+        if (is_scalar($value_value)) {
+            return array($value_path => htmlentities($value_value));
+        }
+
+        $value_as_array = null;
+        $output_array = array();
+
+        if (is_array($value_value)) {
+            $value_as_array = $value_value;
+        }
+
+        if (is_object($value_value)) {
+            $value_as_array = array();
+
+            foreach ($value_value as $property_name => $property_value) {
+                $value_as_array[$property_name] = $property_value;
+            }
+
+            $reflect = new \ReflectionClass($value_value);
+            $properties = $reflect->getProperties();
+
+            foreach ($properties as $prop_obj) {
+                // не показываем статические свойства класса - они не относятся к конкретному объекту (например, это могут быть настройки круда для класса) и в журнале не нужны
+                if ($prop_obj->isStatic()) {
+                    continue;
+                }
+
+                $prop_obj->setAccessible(true);
+                $name = $prop_obj->getName();
+                $value = $prop_obj->getValue($value_value);
+                $value_as_array[$name] = $value;
+            }
+        }
+
+        if (!is_array($value_as_array)) {
+            throw new \Exception('Не удалось привести значение к массиву');
+        }
+
+        foreach ($value_as_array as $key => $value) {
+            $key_path = $key;
+            if ($value_path != '') {
+                $key_path = $value_path . '.' . $key;
+            }
+
+            $value_output = self::convertValueToList($value, $key_path);
+            $output_array = array_merge($output_array, $value_output);
+        }
+
+        return $output_array;
+    }
+
+    static public function getPathWithoutLastElement($path)
+    {
+        $elems = explode('.', $path);
+        array_pop($elems);
+        return implode('.', $elems);
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

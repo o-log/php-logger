@@ -25,7 +25,7 @@ class EntriesListAction implements
     }
 
     static public function pageTitle(){
-        return 'Пользователи';
+        return 'Logger entries';
     }
 
     public function currentBreadcrumbsArr(){
