@@ -1,0 +1,18 @@
+    {
+      "name": "o-log/php-logger",
+      "description": "Store and view model changes history.",
+      "require": {
+        "o-log/php-router": "1.*",
+        "o-log/php-bt": "5.*",
+        "o-log/php-model": "6.*",
+        "o-log/php-crud": "3.*",
+        "o-log/php-auth": "2.*"
+      },
+      "autoload" : {
+        "psr-0" : {
+          "Config" : "",
+          "OLOG" : "",
+          "PhpLoggerDemo" : ""
+        }
+      }
+    }
