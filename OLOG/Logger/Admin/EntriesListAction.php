@@ -1,20 +1,11 @@
 <?php
 
-namespace OLOG\Auth\Admin;
+namespace OLOG\Logger\Admin;
 
 use OLOG\Auth\Operator;
-use OLOG\Auth\Permission;
-use OLOG\Auth\Permissions;
-use OLOG\Auth\User;
-use OLOG\BT\BT;
 use OLOG\BT\InterfaceBreadcrumbs;
 use OLOG\BT\InterfacePageTitle;
-use OLOG\BT\InterfaceUserName;
 use OLOG\BT\Layout;
-use OLOG\CRUD\CRUDForm;
-use OLOG\CRUD\CRUDFormRow;
-use OLOG\CRUD\CRUDFormWidgetInput;
-use OLOG\CRUD\CRUDTableFilter;
 use OLOG\Exits;
 
 class EntriesListAction implements

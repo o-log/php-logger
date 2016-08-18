@@ -2,7 +2,7 @@
 
 namespace OLOG\Logger;
 
-use OLOG\Auth\Admin\EntriesListAction;
+use OLOG\Logger\Admin\EntriesListAction;
 use OLOG\Router;
 
 class RegisterRoutes
