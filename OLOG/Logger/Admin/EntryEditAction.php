@@ -6,19 +6,31 @@ use OLOG\Auth\Operator;
 use OLOG\BT\Layout;
 use OLOG\DB\DBWrapper;
 use OLOG\Exits;
+use OLOG\InterfaceAction;
 use OLOG\Logger\Entry;
 use OLOG\Logger\Permissions;
 
-class EntryEditAction
+class EntryEditAction implements
+    InterfaceAction
 {
-    static public function getUrl($entry_id = '(\d+)'){
-        return '/admin/logger/entry/' . $entry_id;
+    protected $entry_id;
+
+    public function __construct($entry_id){
+        $this->entry_id = $entry_id;
     }
 
-    public function action($entry_id){
-        Exits::exit403If(
-            !Operator::currentOperatorHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS])
-        );
+    public function url(){
+        return '/admin/logger/entry/' . $this->entry_id;
+    }
+
+    static public function urlMask(){
+        return '/admin/logger/entry/(\d+)';
+    }
+
+    public function action(){
+        Exits::exit403If(!Operator::currentOperatorHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS]));
+
+        $entry_id = $this->entry_id;
 
         $html = '';
 

@@ -3,41 +3,23 @@
 namespace OLOG\Logger\Admin;
 
 use OLOG\Auth\Operator;
-use OLOG\BT\InterfaceBreadcrumbs;
-use OLOG\BT\InterfacePageTitle;
-use OLOG\BT\Layout;
 use OLOG\Exits;
+use OLOG\InterfaceAction;
+use OLOG\Layouts\AdminLayoutSelector;
+use OLOG\Layouts\InterfacePageTitle;
 
 class EntriesListAction implements
-    InterfaceBreadcrumbs,
-    InterfacePageTitle//,
-    //InterfaceUserName
+    InterfacePageTitle,
+    InterfaceAction
 {
-    //use CurrentUserNameTrait;
-
-    static public function getUrl(){
+    public function url(){
         return '/admin/logger/entries';
     }
 
-    public function currentPageTitle()
+    public function pageTitle()
     {
-        return self::pageTitle();
-    }
-
-    static public function pageTitle(){
         return 'Logger entries';
     }
-
-    public function currentBreadcrumbsArr(){
-        return self::breadcrumbsArr();
-    }
-
-    static public function breadcrumbsArr()
-    {
-        //return array_merge(AuthAdminAction::breadcrumbsArr(), [BT::a(self::getUrl(), self::pageTitle())]);
-        return [];
-    }
-
 
     public function action(){
         Exits::exit403If(
@@ -65,6 +47,6 @@ class EntriesListAction implements
             'created_at_ts desc'
         );
 
-        Layout::render($html, $this);
+        AdminLayoutSelector::render($html, $this);
     }
 }

@@ -1,18 +1,28 @@
+{
+  "repositories": [
     {
-      "name": "o-log/php-logger",
-      "description": "Store and view model changes history.",
-      "require": {
-        "o-log/php-router": "1.*",
-        "o-log/php-bt": "5.*",
-        "o-log/php-model": "6.*",
-        "o-log/php-crud": "3.*",
-        "o-log/php-auth": "2.*"
-      },
-      "autoload" : {
-        "psr-0" : {
-          "Config" : "",
-          "OLOG" : "",
-          "PhpLoggerDemo" : ""
-        }
-      }
+      "type": "git",
+      "url": "https://github.com/o-log/php-layouts"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/o-log/php-html"
     }
+  ],
+  "name": "o-log/php-logger",
+  "description": "Store and view model changes history.",
+  "require": {
+    "o-log/php-router": "1.*",
+    "o-log/php-layouts": "1.*",
+    "o-log/php-model": "6.*",
+    "o-log/php-crud": "3.*",
+    "o-log/php-auth": "2.*"
+  },
+  "autoload" : {
+    "psr-0" : {
+      "Config" : "",
+      "OLOG" : "",
+      "PhpLoggerDemo" : ""
+    }
+  }
+}

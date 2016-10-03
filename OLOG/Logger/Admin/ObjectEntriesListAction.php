@@ -3,47 +3,41 @@
 namespace OLOG\Logger\Admin;
 
 use OLOG\Auth\Operator;
-use OLOG\BT\InterfaceBreadcrumbs;
-use OLOG\BT\InterfacePageTitle;
-use OLOG\BT\Layout;
 use OLOG\CRUD\CRUDTableFilter;
 use OLOG\Exits;
+use OLOG\InterfaceAction;
+use OLOG\Layouts\AdminLayoutSelector;
+use OLOG\Layouts\InterfacePageTitle;
 
 class ObjectEntriesListAction implements
-    InterfaceBreadcrumbs,
-    InterfacePageTitle//,
-    //InterfaceUserName
+    InterfacePageTitle,
+    InterfaceAction
 {
-    //use CurrentUserNameTrait;
+    protected $object_fullid;
 
-    static public function getUrl($object_fullid = '([\w\.%]+)'){
-        return '/admin/logger/objectentries/' . $object_fullid;
-    }
-
-    public function currentPageTitle()
+    public function __construct($object_fullid)
     {
-        return self::pageTitle();
+        $this->object_fullid = $object_fullid;
     }
 
-    static public function pageTitle(){
+    public function url(){
+        return '/admin/logger/objectentries/' . $this->object_fullid;
+    }
+
+    public function urlMask(){
+        return '/admin/logger/objectentries/([\w\.%]+)';
+    }
+
+    public function pageTitle(){
         return 'Logger entries';
     }
 
-    public function currentBreadcrumbsArr(){
-        return self::breadcrumbsArr();
-    }
-
-    static public function breadcrumbsArr()
-    {
-        //return array_merge(AuthAdminAction::breadcrumbsArr(), [BT::a(self::getUrl(), self::pageTitle())]);
-        return [];
-    }
-
-
-    public function action($object_fullid){
+    public function action(){
         Exits::exit403If(
             !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
+
+        $object_fullid = $this->object_fullid;
 
         $html = \OLOG\CRUD\CRUDTable::html(
             \OLOG\Logger\Entry::class,
@@ -51,7 +45,7 @@ class ObjectEntriesListAction implements
             [
                 new \OLOG\CRUD\CRUDTableColumn(
                     'user_fullid',
-                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', EntryEditAction::getUrl('{this->id}'))
+                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
                     'object_fullid',
@@ -68,6 +62,6 @@ class ObjectEntriesListAction implements
             'created_at_ts desc'
         );
 
-        Layout::render($html, $this);
+        AdminLayoutSelector::render($html, $this);
     }
 }
