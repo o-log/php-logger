@@ -2,6 +2,6 @@
 
 require_once 'vendor/autoload.php';
 
-\PhpLoggerDemo\LoggerDemoConfig::init();
+\LoggerDemo\LoggerDemoConfig::init();
 
 \OLOG\Model\CLI\CLIMenu::run();
