@@ -10,8 +10,8 @@ use OLOG\Router;
 class RegisterRoutes
 {
     static public function registerRoutes(){
-        Router::matchAction(EntriesListAction::class, 0);
-        Router::matchAction(EntryEditAction::class, 0);
-        Router::matchAction(ObjectEntriesListAction::class, 0);
+        Router::processAction(EntriesListAction::class, 0);
+        Router::processAction(EntryEditAction::class, 0);
+        Router::processAction(ObjectEntriesListAction::class, 0);
     }
 }
