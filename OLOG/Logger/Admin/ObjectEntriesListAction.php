@@ -24,7 +24,7 @@ class ObjectEntriesListAction implements
         return '/admin/logger/objectentries/' . $this->object_fullid;
     }
 
-    public function urlMask(){
+    static public function urlMask(){
         return '/admin/logger/objectentries/([\w\.%]+)';
     }
 
