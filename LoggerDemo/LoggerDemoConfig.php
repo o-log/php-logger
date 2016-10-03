@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpLoggerDemo;
+namespace LoggerDemo;
 
 use OLOG\DB\DBConfig;
 use OLOG\DB\DBSettings;
