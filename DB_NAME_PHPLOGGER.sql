@@ -7,4 +7,5 @@ array(
 'alter table olog_logger_entry add column comment text    /* rand116303 */;',
 'insert into olog_auth_permission (title) values ("PERMISSION_PHPLOGGER_ACCESS") /* 83764587345 */;',
 'create table loggerdemo_loggerdemomodel (id int not null auto_increment primary key, created_at_ts int not null default 0) engine InnoDB default charset utf8 /* rand4373 */;',
+'alter table loggerdemo_loggerdemomodel add column title varchar(255)  not null   default "default title"  /* rand645806 */;',
 )

@@ -7,6 +7,7 @@ use OLOG\BT\Layout;
 use OLOG\DB\DBWrapper;
 use OLOG\Exits;
 use OLOG\InterfaceAction;
+use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Logger\Entry;
 use OLOG\Logger\Permissions;
 
@@ -38,7 +39,7 @@ class EntryEditAction implements
         $html .= self::delta($entry_id);
         $html .= self::renderObjectFields($entry_id);
 
-        Layout::render($html, $this);
+        AdminLayoutSelector::render($html, $this);
     }
 
     static public function delta($current_record_id)
@@ -63,7 +64,7 @@ class EntryEditAction implements
 
         // определение дельты
 
-        $html .= '<h2>Изменения относительно <a href="' . EntryEditAction::getUrl($prev_record_id) . '">предыдущей версии</a></h2>';
+        $html .= '<h2>Изменения относительно <a href="' . (new EntryEditAction($prev_record_id))->url() . '">предыдущей версии</a></h2>';
 
         $current_obj = unserialize($current_record_obj->getSerializedObject());
         $prev_obj = unserialize($prev_record_obj->getSerializedObject());

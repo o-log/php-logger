@@ -2,6 +2,7 @@
 
 namespace LoggerDemo;
 
+use OLOG\Auth\AuthConfig;
 use OLOG\Auth\AuthConstants;
 use OLOG\DB\DBConfig;
 use OLOG\DB\DBSettings;
@@ -11,6 +12,8 @@ class LoggerDemoConfig
 {
     static public function init(){
         date_default_timezone_set('Europe/Moscow');
+
+        AuthConfig::setFullAccessCookieName('shdfgklsdgf');
 
         DBConfig::setDBSettingsObj(
             AuthConstants::DB_NAME_PHPAUTH,

@@ -3,7 +3,7 @@
 namespace OLOG\Logger\Admin;
 
 use OLOG\Auth\Operator;
-use OLOG\CRUD\CRUDTableFilter;
+use OLOG\CRUD\CRUDTableFilterEqualInvisible;
 use OLOG\Exits;
 use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
@@ -57,7 +57,7 @@ class ObjectEntriesListAction implements
                 )
             ],
             [
-                new CRUDTableFilter('object_fullid', CRUDTableFilter::FILTER_EQUAL, $object_fullid)
+                new CRUDTableFilterEqualInvisible('object_fullid', $object_fullid)
             ],
             'created_at_ts desc'
         );
