@@ -3,7 +3,6 @@
 namespace OLOG\Logger\Admin;
 
 use OLOG\Auth\Operator;
-use OLOG\BT\Layout;
 use OLOG\DB\DBWrapper;
 use OLOG\Exits;
 use OLOG\InterfaceAction;
