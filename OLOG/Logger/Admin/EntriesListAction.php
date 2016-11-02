@@ -7,7 +7,6 @@ use OLOG\Exits;
 use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Layouts\InterfacePageTitle;
-use OLOG\Logger\Entry;
 
 class EntriesListAction extends LoggerAdminActionsBaseProxy implements
     InterfacePageTitle,
@@ -28,7 +27,7 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
             !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
         $html = \OLOG\CRUD\CRUDTable::html(
-            Entry::class,
+            \OLOG\Logger\Entry::class,
             '',
             [
                 new \OLOG\CRUD\CRUDTableColumn(
