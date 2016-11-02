@@ -62,7 +62,7 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
                     'created at',
-                    new \OLOG\CRUD\CRUDTableWidgetText('{this->created_at_ts}')
+                    new \OLOG\CRUD\CRUDTableWidgetTimestamp('{this->created_at_ts}')
                 )
             ],
             [
