@@ -45,7 +45,7 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
                 )
             ],
             [
-                new \OLOG\CRUD\CRUDTableFilterLike('38947yt7ywssserkit22uy', 'Object Fullid', Entry::_OBJECT_FULLID),
+                new \OLOG\CRUD\CRUDTableFilterLike('38947yt7ywssserkit22uy', 'Object Fullid', \OLOG\Logger\Entry::_OBJECT_FULLID),
             ],
             'created_at_ts desc',
             '8273649529',
