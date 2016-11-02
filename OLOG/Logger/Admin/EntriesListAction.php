@@ -19,28 +19,29 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
 
     public function pageTitle()
     {
-        return 'Logger entries';
+        return 'Журнал';
     }
 
     public function action(){
         Exits::exit403If(
             !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
+
         $html = \OLOG\CRUD\CRUDTable::html(
             \OLOG\Logger\Entry::class,
             '',
             [
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'user fullid',
+                    'Пользователь',
                     new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'object fullid',
+                    'ОБъект',
                     new \OLOG\CRUD\CRUDTableWidgetText('{this->object_fullid}')
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'created at',
-                    new \OLOG\CRUD\CRUDTableWidgetTimestamp('{this->created_at_ts}')
+                    'Дата создания',
+                    new \OLOG\CRUD\CRUDTableWidgetText('{this->created_at_ts}')
                 )
             ],
             [

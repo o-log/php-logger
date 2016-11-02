@@ -171,7 +171,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
 	<dt style="padding: 5px 0;">Имя пользователя</dt>
 	<dd style="padding: 5px 0;">' . $record_obj->getUserFullid() . '</dd>
     <dt style="padding: 5px 0;">Время изменения</dt>
-    <dd style="padding: 5px 0;">' . $record_obj->getCreatedDate() . '</dd>
+    <dd style="padding: 5px 0;">' . date('d.m H:i', $record_obj->getCreatedAtTs()) . '</dd>
     <dt style="padding: 5px 0;">IP адрес</dt>
     <dd style="padding: 5px 0;">' . $record_obj->getUserIp() . '</dd>
     <dt style="padding: 5px 0;">Комментарий</dt>
