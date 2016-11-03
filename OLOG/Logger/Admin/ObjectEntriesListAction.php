@@ -46,7 +46,7 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
             !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
 
-        $object_fullid = $this->object_fullid;
+        $object_fullid = urlencode($this->object_fullid);
 
         $html = \OLOG\CRUD\CRUDTable::html(
             \OLOG\Logger\Entry::class,
