@@ -108,26 +108,20 @@ class Entry implements
 
 
 
-    static public function logObjectEvent($object, $comment ='', $user_fullid = null)
+    static public function logObjectEvent($object, $comment, $user_fullid, $object_fullid = null)
     {
         $remote_addr = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : '';
         $ip_address = $remote_addr;
 
-
-        if (is_null($user_fullid)){
-            $user_fullid = FullObjectId::getFullObjectId(Auth::currentUserObj());
+        if (is_null($object_fullid)){
+            $object_fullid = FullObjectId::getFullObjectId($object);
         }
-
-        if ($object instanceof InterfaceLoggerPresentation) {
-            $serialized_object = serialize($object->getLoggerPresentation());
-        }else{
-            $serialized_object = serialize($object);
-        }
+        $serialized_object = serialize($object);
 
         $new_entry_obj = new Entry();
         $new_entry_obj->setUserIp($ip_address);
         $new_entry_obj->setUserFullid($user_fullid);
-        $new_entry_obj->setObjectFullid(FullObjectId::getFullObjectId($object));
+        $new_entry_obj->setObjectFullid($object_fullid);
         $new_entry_obj->setSerializedObject($serialized_object);
         $new_entry_obj->setComment($comment);
         $new_entry_obj->save();
