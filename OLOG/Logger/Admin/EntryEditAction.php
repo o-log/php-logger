@@ -2,7 +2,10 @@
 
 namespace OLOG\Logger\Admin;
 
+use OLOG\Auth\Admin\UserEditAction;
 use OLOG\Auth\Operator;
+use OLOG\Auth\User;
+use OLOG\BT\BT;
 use OLOG\DB\DBWrapper;
 use OLOG\Exits;
 use OLOG\InterfaceAction;
@@ -15,19 +18,23 @@ class EntryEditAction implements
 {
     protected $entry_id;
 
-    public function __construct($entry_id){
+    public function __construct($entry_id)
+    {
         $this->entry_id = $entry_id;
     }
 
-    public function url(){
+    public function url()
+    {
         return '/admin/logger/entry/' . $this->entry_id;
     }
 
-    static public function urlMask(){
+    static public function urlMask()
+    {
         return '/admin/logger/entry/(\d+)';
     }
 
-    public function action(){
+    public function action()
+    {
         Exits::exit403If(!Operator::currentOperatorHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS]));
 
         $entry_id = $this->entry_id;
@@ -153,10 +160,19 @@ class EntryEditAction implements
             }
         }
         */
+        $user_str = $record_obj->getUserFullid();
+        $user_id = end(explode('.', $user_str));
+        $user_obj = User::factory($user_id, false);
+        if (!is_null($user_obj)) {
+            $user_str = BT::a(
+                (new UserEditAction('{this->id}'))->url(),
+                $user_obj->getLogin()
+            );
+        }
 
         return '<dl class="dl-horizontal jumbotron" style="margin-top:20px;padding: 10px;">
 	<dt style="padding: 5px 0;">Имя пользователя</dt>
-	<dd style="padding: 5px 0;">' . $record_obj->getUserFullid() . '</dd>
+	<dd style="padding: 5px 0;">' . $user_str . '</dd>
     <dt style="padding: 5px 0;">Время изменения</dt>
     <dd style="padding: 5px 0;">' . $record_obj->getCreatedAtTs() . '</dd>
     <dt style="padding: 5px 0;">IP адрес</dt>
@@ -209,7 +225,7 @@ class EntryEditAction implements
             $html .= '</tr>';
             */
 
-            if (strlen($value) > 100){
+            if (strlen($value) > 100) {
                 $html .= '<div style="padding: 5px 0px; border-bottom: 1px solid #ddd;">';
 
                 $html .= '<div><b>' . $path_to_display . '</b></div>';
