@@ -25,37 +25,41 @@ class Entry implements
     protected $comment;
     protected $id;
 
-    public function getComment(){
+    public function getComment()
+    {
         return $this->comment;
     }
 
-    public function setComment($value){
+    public function setComment($value)
+    {
         $this->comment = $value;
     }
 
 
-
-    public function getUserIp(){
+    public function getUserIp()
+    {
         return $this->user_ip;
     }
 
-    public function setUserIp($value){
+    public function setUserIp($value)
+    {
         $this->user_ip = $value;
     }
 
 
-
-    public function getSerializedObject(){
+    public function getSerializedObject()
+    {
         return $this->serialized_object;
     }
 
-    public function setSerializedObject($value){
+    public function setSerializedObject($value)
+    {
         $this->serialized_object = $value;
     }
 
 
-
-    static public function getIdsArrForObjectFullidByCreatedAtDesc($value, $offset = 0, $page_size = 30){
+    static public function getIdsArrForObjectFullidByCreatedAtDesc($value, $offset = 0, $page_size = 30)
+    {
         if (is_null($value)) {
             return \OLOG\DB\DBWrapper::readColumn(
                 self::DB_ID,
@@ -71,17 +75,19 @@ class Entry implements
     }
 
 
-    public function getObjectFullid(){
+    public function getObjectFullid()
+    {
         return $this->object_fullid;
     }
 
-    public function setObjectFullid($value){
+    public function setObjectFullid($value)
+    {
         $this->object_fullid = $value;
     }
 
 
-
-    static public function getIdsArrForUserFullidByCreatedAtDesc($value, $offset = 0, $page_size = 30){
+    static public function getIdsArrForUserFullidByCreatedAtDesc($value, $offset = 0, $page_size = 30)
+    {
         if (is_null($value)) {
             return \OLOG\DB\DBWrapper::readColumn(
                 self::DB_ID,
@@ -97,45 +103,35 @@ class Entry implements
     }
 
 
-    public function getUserFullid(){
+    public function getUserFullid()
+    {
         return $this->user_fullid;
     }
 
-    public function setUserFullid($value){
+    public function setUserFullid($value)
+    {
         $this->user_fullid = $value;
     }
 
-
-
-    static public function logObjectEvent($object, $comment, $user_fullid, $object_fullid = null)
+    static function logPresentaionObjectEvent($object, $comment, $user_fullid, $object_fullid)
     {
-        $remote_addr = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : '';
-        $ip_address = $remote_addr;
-
-        if (is_null($object_fullid)){
-            $object_fullid = FullObjectId::getFullObjectId($object);
-        }
-        $serialized_object = serialize($object);
-
+        $ip_address = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : '';
         $new_entry_obj = new Entry();
         $new_entry_obj->setUserIp($ip_address);
         $new_entry_obj->setUserFullid($user_fullid);
         $new_entry_obj->setObjectFullid($object_fullid);
-        $new_entry_obj->setSerializedObject($serialized_object);
+        $new_entry_obj->setSerializedObject(serialize($object));
         $new_entry_obj->setComment($comment);
         $new_entry_obj->save();
-
-        /*
-        DBWrapper::query(
-            self::DB_ID,
-            "INSERT INTO " . self::DB_TABLE_NAME . " (user_id, user_fullid, ts, ip, action, entity_id, object) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)",
-            array($drupal_user_id, $user_full_id, $ip_address, $action, $entity_id, $serialized_object)
-        );
-        */
     }
 
+    static public function logObjectEvent($object, $comment, $user_fullid)
+    {
+        self::logPresentaionObjectEvent($object, $comment, $user_fullid, FullObjectId::getFullObjectId($object));
+    }
 
-    static public function getAllIdsArrByCreatedAtDesc($offset = 0, $page_size = 30){
+    static public function getAllIdsArrByCreatedAtDesc($offset = 0, $page_size = 30)
+    {
         $ids_arr = \OLOG\DB\DBWrapper::readColumn(
             self::DB_ID,
             'select id from ' . self::DB_TABLE_NAME . ' order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
@@ -143,7 +139,8 @@ class Entry implements
         return $ids_arr;
     }
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->created_at_ts = time();
     }
 
