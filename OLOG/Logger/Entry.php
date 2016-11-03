@@ -180,9 +180,4 @@ class Entry implements
         $this->created_at_ts = $timestamp;
     }
 
-    public function getCreatedDate()
-    {
-        return date('d.m H:i', $this->getCreatedAtTs());
-    }
-
 }

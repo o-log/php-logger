@@ -31,10 +31,10 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
     {
         return '/admin/logger/entry/(\d+)';
     }
+
     public function pageTitle()
     {
-        $current_record_obj = Entry::factory($this->entry_id);
-        return 'Entry ' . $current_record_obj->getId();
+        return 'Запись ' . $this->entry_id;
     }
 
     public function topActionObj()
@@ -64,7 +64,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
 
         $prev_record_id = DBWrapper::readField(
             Entry::DB_ID,
-            "SELECT " . Entry::_ID . " FROM " . Entry::DB_TABLE_NAME . " WHERE " . Entry::_ID . " < ? AND " . Entry::_OBJECT_FULLID. " = ? ORDER BY id DESC LIMIT 1",
+            "SELECT " . Entry::_ID . " FROM " . Entry::DB_TABLE_NAME . " WHERE " . Entry::_ID . " < ? AND " . Entry::_OBJECT_FULLID . " = ? ORDER BY id DESC LIMIT 1",
             array($current_record_id, $current_record_obj->getObjectFullid())
         );
 
@@ -222,7 +222,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
             $html .= '</tr>';
             */
 
-            if (strlen($value) > 100){
+            if (strlen($value) > 100) {
                 $html .= '<div style="padding: 5px 0px; border-bottom: 1px solid #ddd;">';
 
                 $html .= '<div><b>' . $path_to_display . '</b></div>';

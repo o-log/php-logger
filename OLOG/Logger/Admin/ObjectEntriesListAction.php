@@ -32,7 +32,7 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
 
     public function pageTitle()
     {
-        return $this->object_fullid;
+        return 'Объект ' . $this->object_fullid;
     }
 
     public function topActionObj()

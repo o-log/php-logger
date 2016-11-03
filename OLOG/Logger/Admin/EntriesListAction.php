@@ -13,7 +13,8 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
     InterfaceAction
 {
 
-    public function url(){
+    public function url()
+    {
         return '/admin/logger/entries';
     }
 
@@ -22,7 +23,8 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
         return 'Журнал';
     }
 
-    public function action(){
+    public function action()
+    {
         Exits::exit403If(
             !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
@@ -36,7 +38,7 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
                     new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'ОБъект',
+                    'Объект',
                     new \OLOG\CRUD\CRUDTableWidgetText('{this->object_fullid}')
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
