@@ -2,7 +2,6 @@
 
 namespace OLOG\Logger;
 
-use OLOG\Auth\Auth;
 use OLOG\FullObjectId;
 
 class Entry implements
