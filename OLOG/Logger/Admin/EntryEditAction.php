@@ -140,7 +140,7 @@ class EntryEditAction implements
         return mb_substr($v, 0, $limit) . '...';
     }
 
-    static public function getUserNameByFullId($user_fullid)
+    static public function getUserNameWithLinkByFullId($user_fullid)
     {
         $user_str = $user_fullid;
         $user_id = end(explode('.', $user_str));
@@ -174,7 +174,7 @@ class EntryEditAction implements
             }
         }
         */
-        $user_str = self::getUserNameByFullId($record_obj->getUserFullid());
+        $user_str = self::getUserNameWithLinkByFullId($record_obj->getUserFullid());
 
         return '<dl class="dl-horizontal jumbotron" style="margin-top:20px;padding: 10px;">
 	<dt style="padding: 5px 0;">Имя пользователя</dt>
