@@ -144,7 +144,7 @@ class EntryEditAction implements
     {
         $user_str = $user_fullid;
         $user_fullid_arr = explode('.', $user_str);
-        if (array_key_exists(1, $user_fullid_arr)) {
+        if (!array_key_exists(1, $user_fullid_arr)) {
             return $user_str;
         }
         $user_obj = User::factory($user_fullid_arr[1], false);
