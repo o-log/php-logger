@@ -151,7 +151,7 @@ class EntryEditAction implements
         if (is_null($user_obj)) {
             return $user_str;
         }
-        return HTML::a((new UserEditAction('{this->id}'))->url(), $user_obj->getLogin());
+        return HTML::a((new UserEditAction($user_obj->getId()))->url(), $user_obj->getLogin());
     }
 
     static public function renderRecordHead($record_id)
