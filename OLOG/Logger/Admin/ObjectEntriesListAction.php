@@ -53,16 +53,16 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
             '',
             [
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'Пользователь',
-                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
-                ),
-                new \OLOG\CRUD\CRUDTableColumn(
                     'Объект',
                     new \OLOG\CRUD\CRUDTableWidgetText('{this->object_fullid}')
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
                     'Дата создания',
                     new \OLOG\CRUD\CRUDTableWidgetTimestamp('{this->created_at_ts}')
+                ),
+                new \OLOG\CRUD\CRUDTableColumn(
+                    'Пользователь',
+                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
                 )
             ],
             [
