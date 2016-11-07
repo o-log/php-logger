@@ -113,7 +113,7 @@ class Entry implements
         $this->user_fullid = $value;
     }
 
-    static function logPresentaionObjectEvent($object, $comment, $user_fullid, $object_fullid)
+    static function logObjectAndId($object, $object_fullid, $comment, $user_fullid)
     {
         $ip_address = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : '';
         $new_entry_obj = new Entry();
@@ -127,7 +127,7 @@ class Entry implements
 
     static public function logObjectEvent($object, $comment, $user_fullid)
     {
-        self::logPresentaionObjectEvent($object, $comment, $user_fullid, FullObjectId::getFullObjectId($object));
+        self::logObjectAndId($object, FullObjectId::getFullObjectId($object), $comment, $user_fullid);
     }
 
     static public function getAllIdsArrByCreatedAtDesc($offset = 0, $page_size = 30)
