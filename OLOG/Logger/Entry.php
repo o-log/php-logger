@@ -17,6 +17,11 @@ class Entry implements
     const DB_ID = 'DB_NAME_PHPLOGGER';
     const DB_TABLE_NAME = 'olog_logger_entry';
 
+    const _USER_FULLID = 'user_fullid';
+    const _OBJECT_FULLID = 'object_fullid';
+    const _SERIALIZED_OBJECT = 'serialized_object';
+    const _ID = 'id';
+
     protected $created_at_ts; // initialized by constructor
     protected $user_fullid;
     protected $object_fullid;
@@ -34,7 +39,6 @@ class Entry implements
     {
         $this->comment = $value;
     }
-
 
     public function getUserIp()
     {
@@ -63,12 +67,12 @@ class Entry implements
         if (is_null($value)) {
             return \OLOG\DB\DBWrapper::readColumn(
                 self::DB_ID,
-                'select id from ' . self::DB_TABLE_NAME . ' where object_fullid is null order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
+                'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_OBJECT_FULLID . ' is null order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
             );
         } else {
             return \OLOG\DB\DBWrapper::readColumn(
                 self::DB_ID,
-                'select id from ' . self::DB_TABLE_NAME . ' where object_fullid = ? order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset),
+                'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_OBJECT_FULLID . ' = ? order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset),
                 array($value)
             );
         }
@@ -91,12 +95,12 @@ class Entry implements
         if (is_null($value)) {
             return \OLOG\DB\DBWrapper::readColumn(
                 self::DB_ID,
-                'select id from ' . self::DB_TABLE_NAME . ' where user_fullid is null order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
+                'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_USER_FULLID . ' is null order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
             );
         } else {
             return \OLOG\DB\DBWrapper::readColumn(
                 self::DB_ID,
-                'select id from ' . self::DB_TABLE_NAME . ' where user_fullid = ? order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset),
+                'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_USER_FULLID . ' = ? order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset),
                 array($value)
             );
         }
@@ -134,7 +138,7 @@ class Entry implements
     {
         $ids_arr = \OLOG\DB\DBWrapper::readColumn(
             self::DB_ID,
-            'select id from ' . self::DB_TABLE_NAME . ' order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
+            'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
         );
         return $ids_arr;
     }
@@ -175,4 +179,5 @@ class Entry implements
     {
         $this->created_at_ts = $timestamp;
     }
+
 }

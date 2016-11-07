@@ -9,7 +9,7 @@ use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Layouts\InterfacePageTitle;
 
-class ObjectEntriesListAction implements
+class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
     InterfacePageTitle,
     InterfaceAction
 {
@@ -20,19 +20,28 @@ class ObjectEntriesListAction implements
         $this->object_fullid = $object_fullid;
     }
 
-    public function url(){
-        return '/admin/logger/objectentries/' . $this->object_fullid;
+    public function url()
+    {
+        return '/admin/logger/objectentries/' . urlencode($this->object_fullid);
     }
 
-    static public function urlMask(){
+    static public function urlMask()
+    {
         return '/admin/logger/objectentries/([\w\.%]+)';
     }
 
-    public function pageTitle(){
-        return 'Logger entries';
+    public function pageTitle()
+    {
+        return 'Объект ' . $this->object_fullid;
     }
 
-    public function action(){
+    public function topActionObj()
+    {
+        return new EntriesListAction();
+    }
+
+    public function action()
+    {
         Exits::exit403If(
             !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
@@ -44,16 +53,16 @@ class ObjectEntriesListAction implements
             '',
             [
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'user_fullid',
+                    'Пользователь',
                     new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'object_fullid',
+                    'Объект',
                     new \OLOG\CRUD\CRUDTableWidgetText('{this->object_fullid}')
                 ),
                 new \OLOG\CRUD\CRUDTableColumn(
-                    'created at',
-                    new \OLOG\CRUD\CRUDTableWidgetText('{this->created_at_ts}')
+                    'Дата создания',
+                    new \OLOG\CRUD\CRUDTableWidgetTimestamp('{this->created_at_ts}')
                 )
             ],
             [

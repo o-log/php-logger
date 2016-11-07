@@ -10,11 +10,13 @@ use OLOG\Exits;
 use OLOG\HTML;
 use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
+use OLOG\Layouts\InterfacePageTitle;
 use OLOG\Logger\Entry;
 use OLOG\Logger\Permissions;
 
-class EntryEditAction implements
-    InterfaceAction
+class EntryEditAction extends LoggerAdminActionsBaseProxy implements
+    InterfaceAction,
+    InterfacePageTitle
 {
     protected $entry_id;
 
@@ -33,17 +35,24 @@ class EntryEditAction implements
         return '/admin/logger/entry/(\d+)';
     }
 
+    public function pageTitle()
+    {
+        return 'Запись ' . $this->entry_id;
+    }
+
+    public function topActionObj()
+    {
+        $current_record_obj = Entry::factory($this->entry_id);
+        return new ObjectEntriesListAction($current_record_obj->getObjectFullid());
+    }
+
     public function action()
     {
         Exits::exit403If(!Operator::currentOperatorHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS]));
-
-        $entry_id = $this->entry_id;
-
         $html = '';
-
-        $html .= self::renderRecordHead($entry_id);
-        $html .= self::delta($entry_id);
-        $html .= self::renderObjectFields($entry_id);
+        $html .= self::renderRecordHead($this->entry_id);
+        $html .= self::delta($this->entry_id);
+        $html .= self::renderObjectFields($this->entry_id);
 
         AdminLayoutSelector::render($html, $this);
     }
@@ -58,7 +67,7 @@ class EntryEditAction implements
 
         $prev_record_id = DBWrapper::readField(
             Entry::DB_ID,
-            "SELECT id FROM " . Entry::DB_TABLE_NAME . " WHERE id < ? AND object_fullid = ? ORDER BY id DESC LIMIT 1",
+            "SELECT " . Entry::_ID . " FROM " . Entry::DB_TABLE_NAME . " WHERE " . Entry::_ID . " < ? AND " . Entry::_OBJECT_FULLID . " = ? ORDER BY id DESC LIMIT 1",
             array($current_record_id, $current_record_obj->getObjectFullid())
         );
 
@@ -180,7 +189,7 @@ class EntryEditAction implements
 	<dt style="padding: 5px 0;">Имя пользователя</dt>
 	<dd style="padding: 5px 0;">' . $user_str . '</dd>
     <dt style="padding: 5px 0;">Время изменения</dt>
-    <dd style="padding: 5px 0;">' . $record_obj->getCreatedAtTs() . '</dd>
+    <dd style="padding: 5px 0;">' . date('d.m H:i', $record_obj->getCreatedAtTs()) . '</dd>
     <dt style="padding: 5px 0;">IP адрес</dt>
     <dd style="padding: 5px 0;">' . $record_obj->getUserIp() . '</dd>
     <dt style="padding: 5px 0;">Комментарий</dt>
@@ -319,38 +328,3 @@ class EntryEditAction implements
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
