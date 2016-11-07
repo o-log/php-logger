@@ -143,15 +143,16 @@ class EntryEditAction implements
     static public function getUserNameWithLinkByFullId($user_fullid)
     {
         $user_str = $user_fullid;
-        list(, $user_id) = explode('.', $user_str);
-        if (!is_null($user_id)) {
-            $user_obj = User::factory($user_id, false);
-            if (!is_null($user_obj)) {
-                $user_str = HTML::a(
-                    (new UserEditAction('{this->id}'))->url(),
-                    $user_obj->getLogin()
-                );
-            }
+        $user_fullid_arr = explode('.', $user_str);
+        if (!isset($user_fullid_arr[1])) {
+            return $user_str;
+        }
+        $user_obj = User::factory($user_fullid_arr[1], false);
+        if (!is_null($user_obj)) {
+            $user_str = HTML::a(
+                (new UserEditAction('{this->id}'))->url(),
+                $user_obj->getLogin()
+            );
         }
         return $user_str;
     }
