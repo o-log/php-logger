@@ -144,17 +144,14 @@ class EntryEditAction implements
     {
         $user_str = $user_fullid;
         $user_fullid_arr = explode('.', $user_str);
-        if (!isset($user_fullid_arr[1])) {
+        if (array_key_exists(1, $user_fullid_arr)) {
             return $user_str;
         }
         $user_obj = User::factory($user_fullid_arr[1], false);
-        if (!is_null($user_obj)) {
-            $user_str = HTML::a(
-                (new UserEditAction('{this->id}'))->url(),
-                $user_obj->getLogin()
-            );
+        if (is_null($user_obj)) {
+            return $user_str;
         }
-        return $user_str;
+        return HTML::a((new UserEditAction('{this->id}'))->url(), $user_obj->getLogin());
     }
 
     static public function renderRecordHead($record_id)
