@@ -16,7 +16,7 @@
     "o-log/php-layouts": "1.*",
     "o-log/php-model": "6.*",
     "o-log/php-crud": "4.*",
-    "o-log/php-bt": "6.*",
+    "o-log/php-html": "1.*",
     "o-log/php-auth": "2.*"
   },
   "autoload" : {

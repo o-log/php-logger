@@ -5,9 +5,9 @@ namespace OLOG\Logger\Admin;
 use OLOG\Auth\Admin\UserEditAction;
 use OLOG\Auth\Operator;
 use OLOG\Auth\User;
-use OLOG\BT\BT;
 use OLOG\DB\DBWrapper;
 use OLOG\Exits;
+use OLOG\HTML;
 use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Logger\Entry;
@@ -140,6 +140,20 @@ class EntryEditAction implements
         return mb_substr($v, 0, $limit) . '...';
     }
 
+    static public function getUserNameByFullId($user_fullid)
+    {
+        $user_str = $user_fullid;
+        $user_id = end(explode('.', $user_str));
+        $user_obj = User::factory($user_id, false);
+        if (!is_null($user_obj)) {
+            $user_str = HTML::a(
+                (new UserEditAction('{this->id}'))->url(),
+                $user_obj->getLogin()
+            );
+        }
+        return $user_str;
+    }
+
     static public function renderRecordHead($record_id)
     {
         $record_obj = Entry::factory($record_id);
@@ -160,15 +174,7 @@ class EntryEditAction implements
             }
         }
         */
-        $user_str = $record_obj->getUserFullid();
-        $user_id = end(explode('.', $user_str));
-        $user_obj = User::factory($user_id, false);
-        if (!is_null($user_obj)) {
-            $user_str = BT::a(
-                (new UserEditAction('{this->id}'))->url(),
-                $user_obj->getLogin()
-            );
-        }
+        $user_str = self::getUserNameByFullId($record_obj->getUserFullid());
 
         return '<dl class="dl-horizontal jumbotron" style="margin-top:20px;padding: 10px;">
 	<dt style="padding: 5px 0;">Имя пользователя</dt>
