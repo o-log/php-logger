@@ -14,7 +14,7 @@ class LoggerAdminMenu implements InterfaceMenu
         $menu_arr =  [];
         if (Auth::currentUserHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS])) {
             $menu_arr = [
-                new MenuItem((new EntriesListAction())->pageTitle(), (new EntriesListAction())->url(), null, 'glyphicon glyphicon-flag')
+                new MenuItem((new EntriesListAction())->pageTitle(), (new EntriesListAction())->url(), [], 'glyphicon glyphicon-flag')
             ];
         }
         return $menu_arr;
