@@ -1,5 +1,7 @@
 <?php
 
+namespace OLOG\Logger;
+
 class LoggerLocker
 {
     private static  $locked_objects_arr = [];
