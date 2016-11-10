@@ -119,9 +119,9 @@ class Entry implements
 
     /**
      * Сохранение объекта
-     * Каждый сохраняемый объект запоминаем. если запрашивается сохранение с таким же id
+     * Каждый сохраняемый объект запоминаем. если запрашивается сохранение с таким же object_fullid
      * то смотрим есть ли изменения по сравнению с уже сохраненным.
-     * Если нет то не сохраняем. если есть то переписываем уже сожраненый
+     * Если нет то не сохраняем. если есть то переписываем уже сохраненый
      *
      * @param $object
      * @param $object_fullid
@@ -147,6 +147,7 @@ class Entry implements
             if ($serialized_object != $saved_entry_obj->getSerializedObject()) {
                 $saved_entry_obj->setSerializedObject($serialized_object);
                 $saved_entry_obj->save();
+                $saved_entries_arr[$object_fullid] = $saved_entry_obj;
             }
         }
     }
