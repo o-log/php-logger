@@ -117,16 +117,38 @@ class Entry implements
         $this->user_fullid = $value;
     }
 
+    /**
+     * Сохранение объекта
+     * Каждый сохраняемый объект запоминаем. если запрашивается сохранение с таким же id
+     * то смотрим есть ли изменения по сравнению с уже сохраненным.
+     * Если нет то не сохраняем. если есть то переписываем уже сожраненый
+     *
+     * @param $object
+     * @param $object_fullid
+     * @param $comment
+     * @param $user_fullid
+     */
     static function logObjectAndId($object, $object_fullid, $comment, $user_fullid)
     {
         $ip_address = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : '';
-        $new_entry_obj = new Entry();
-        $new_entry_obj->setUserIp($ip_address);
-        $new_entry_obj->setUserFullid($user_fullid);
-        $new_entry_obj->setObjectFullid($object_fullid);
-        $new_entry_obj->setSerializedObject(serialize($object));
-        $new_entry_obj->setComment($comment);
-        $new_entry_obj->save();
+        static $saved_entries_arr = [];
+        if (!array_key_exists($object_fullid, $saved_entries_arr)) {
+            $new_entry_obj = new Entry();
+            $new_entry_obj->setUserIp($ip_address);
+            $new_entry_obj->setUserFullid($user_fullid);
+            $new_entry_obj->setObjectFullid($object_fullid);
+            $new_entry_obj->setSerializedObject(serialize($object));
+            $new_entry_obj->setComment($comment);
+            $new_entry_obj->save();
+            $saved_entries_arr[$object_fullid] = $new_entry_obj;
+        } else {
+            $saved_entry_obj = $saved_entries_arr[$object_fullid];
+            $serialized_object = serialize($object);
+            if ($serialized_object != $saved_entry_obj->getSerializedObject()) {
+                $saved_entry_obj->setSerializedObject($serialized_object);
+                $saved_entry_obj->save();
+            }
+        }
     }
 
     static public function logObjectEvent($object, $comment, $user_fullid)
