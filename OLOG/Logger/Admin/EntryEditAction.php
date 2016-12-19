@@ -167,22 +167,6 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
     {
         $record_obj = Entry::factory($record_id);
 
-        /*
-        $record_obj = \Sportbox\DB\DBWrapper::readObject(
-            \Sportbox\Logger\Logger::DB_ID,
-            "SELECT user_fullid, ts, ip, action, entity_id, object FROM " . \Sportbox\Logger\Logger::DB_TABLE_NAME . " WHERE id = ?",
-            array($record_id)
-        );
-
-        $username = '';
-
-        if ($record_obj->user_fullid) {
-            $user_obj = \Sportbox\Factory\Factory2::loadObjectByFullId($record_obj->user_fullid);
-            if ($user_obj instanceof \Sportbox\Model\InterfaceGetTitle) {
-                $username = $user_obj->getTitle();
-            }
-        }
-        */
         $user_str = self::getUserNameWithLinkByFullId($record_obj->getUserFullid());
 
         return '<dl class="dl-horizontal jumbotron" style="margin-top:20px;padding: 10px;">
@@ -206,15 +190,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
 
         $record_obj = Entry::factory($record_id);
 
-        /*
-        $logger_objs_arr = \Sportbox\DB\DBWrapper::readObject(
-            \Sportbox\Logger\Logger::DB_ID,
-            "SELECT user_id, ts, ip, action, entity_id, object FROM " . \Sportbox\Logger\Logger::DB_TABLE_NAME . " WHERE id = ?",
-            array($record_id)
-        );
-        */
-
-        $record_objs = unserialize($record_obj->getSerializedObject());
+	$record_objs = unserialize($record_obj->getSerializedObject());
 
         $value_as_list = self::convertValueToList($record_objs);
         ksort($value_as_list); // сортируем для красоты
