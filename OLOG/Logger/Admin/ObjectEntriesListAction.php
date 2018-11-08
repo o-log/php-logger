@@ -2,16 +2,23 @@
 
 namespace OLOG\Logger\Admin;
 
-use OLOG\Auth\Operator;
-use OLOG\CRUD\CRUDTableFilterEqualInvisible;
+use OLOG\ActionInterface;
+use OLOG\Auth\Auth;
+use OLOG\CRUD\CTable;
+use OLOG\CRUD\TCol;
+use OLOG\CRUD\TFEqualHidden;
+use OLOG\CRUD\TWText;
+use OLOG\CRUD\TWTextWithLink;
+use OLOG\CRUD\TWTimestamp;
 use OLOG\Exits;
-use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
-use OLOG\Layouts\InterfacePageTitle;
+use OLOG\Layouts\PageTitleInterface;
+use OLOG\MaskActionInterface;
 
 class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
-    InterfacePageTitle,
-    InterfaceAction
+    PageTitleInterface,
+    ActionInterface,
+    MaskActionInterface
 {
     protected $object_fullid;
 
@@ -25,7 +32,7 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
         return '/admin/logger/objectentries/' . urlencode($this->object_fullid);
     }
 
-    static public function urlMask()
+    static public function mask()
     {
         return '/admin/logger/objectentries/([\w\.%]+)';
     }
@@ -43,30 +50,30 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
     public function action()
     {
         Exits::exit403If(
-            !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
+            !Auth::currentUserHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
 
         $object_fullid = $this->object_fullid;
 
-        $html = \OLOG\CRUD\CRUDTable::html(
+        $html = CTable::html(
             \OLOG\Logger\Entry::class,
             '',
             [
-                new \OLOG\CRUD\CRUDTableColumn(
+                new TCol(
                     'Объект',
-                    new \OLOG\CRUD\CRUDTableWidgetText('{this->object_fullid}')
+                    new TWText('{this->object_fullid}')
                 ),
-                new \OLOG\CRUD\CRUDTableColumn(
+                new TCol(
                     'Дата создания',
-                    new \OLOG\CRUD\CRUDTableWidgetTimestamp('{this->created_at_ts}')
+                    new TWTimestamp('{this->created_at_ts}')
                 ),
-                new \OLOG\CRUD\CRUDTableColumn(
+                new TCol(
                     'Пользователь',
-                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
+                    new TWTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
                 )
             ],
             [
-                new CRUDTableFilterEqualInvisible('object_fullid', $object_fullid)
+                new TFEqualHidden('object_fullid', $object_fullid)
             ],
             'created_at_ts desc'
         );

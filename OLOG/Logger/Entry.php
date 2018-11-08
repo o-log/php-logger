@@ -2,17 +2,12 @@
 
 namespace OLOG\Logger;
 
-use OLOG\FullObjectId;
+use OLOG\Model\FullObjectId;
 
 class Entry implements
-    \OLOG\Model\InterfaceFactory,
-    \OLOG\Model\InterfaceLoad,
-    \OLOG\Model\InterfaceSave,
-    \OLOG\Model\InterfaceDelete
+    \OLOG\Model\ActiveRecordInterface
 {
-    use \OLOG\Model\FactoryTrait;
     use \OLOG\Model\ActiveRecordTrait;
-    use \OLOG\Model\ProtectPropertiesTrait;
 
     const DB_ID = 'DB_NAME_PHPLOGGER';
     const DB_TABLE_NAME = 'olog_logger_entry';
@@ -65,12 +60,12 @@ class Entry implements
     static public function getIdsArrForObjectFullidByCreatedAtDesc($value, $offset = 0, $page_size = 30)
     {
         if (is_null($value)) {
-            return \OLOG\DB\DBWrapper::readColumn(
+            return \OLOG\DB\DB::readColumn(
                 self::DB_ID,
                 'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_OBJECT_FULLID . ' is null order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
             );
         } else {
-            return \OLOG\DB\DBWrapper::readColumn(
+            return \OLOG\DB\DB::readColumn(
                 self::DB_ID,
                 'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_OBJECT_FULLID . ' = ? order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset),
                 array($value)
@@ -93,12 +88,12 @@ class Entry implements
     static public function getIdsArrForUserFullidByCreatedAtDesc($value, $offset = 0, $page_size = 30)
     {
         if (is_null($value)) {
-            return \OLOG\DB\DBWrapper::readColumn(
+            return \OLOG\DB\DB::readColumn(
                 self::DB_ID,
                 'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_USER_FULLID . ' is null order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
             );
         } else {
-            return \OLOG\DB\DBWrapper::readColumn(
+            return \OLOG\DB\DB::readColumn(
                 self::DB_ID,
                 'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' where ' . self::_USER_FULLID . ' = ? order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset),
                 array($value)
@@ -159,7 +154,7 @@ class Entry implements
 
     static public function getAllIdsArrByCreatedAtDesc($offset = 0, $page_size = 30)
     {
-        $ids_arr = \OLOG\DB\DBWrapper::readColumn(
+        $ids_arr = \OLOG\DB\DB::readColumn(
             self::DB_ID,
             'select ' . self::_ID . ' from ' . self::DB_TABLE_NAME . ' order by created_at_ts desc limit ' . intval($page_size) . ' offset ' . intval($offset)
         );

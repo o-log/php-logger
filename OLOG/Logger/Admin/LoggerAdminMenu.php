@@ -3,11 +3,11 @@
 namespace OLOG\Logger\Admin;
 
 use OLOG\Auth\Auth;
-use OLOG\Layouts\InterfaceMenu;
+use OLOG\Layouts\MenuInterface;
 use OLOG\Layouts\MenuItem;
 use OLOG\Logger\Permissions;
 
-class LoggerAdminMenu implements InterfaceMenu
+class LoggerAdminMenu implements MenuInterface
 {
     static public function menuArr()
     {

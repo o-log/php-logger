@@ -2,15 +2,22 @@
 
 namespace OLOG\Logger\Admin;
 
-use OLOG\Auth\Operator;
+
+use OLOG\ActionInterface;
+use OLOG\Auth\Auth;
+use OLOG\CRUD\CTable;
+use OLOG\CRUD\TCol;
+use OLOG\CRUD\TFLikeInline;
+use OLOG\CRUD\TWText;
+use OLOG\CRUD\TWTextWithLink;
+use OLOG\CRUD\TWTimestamp;
 use OLOG\Exits;
-use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
-use OLOG\Layouts\InterfacePageTitle;
+use OLOG\Layouts\PageTitleInterface;
 
 class EntriesListAction extends LoggerAdminActionsBaseProxy implements
-    InterfacePageTitle,
-    InterfaceAction
+    PageTitleInterface,
+    ActionInterface
 {
 
     public function url()
@@ -26,32 +33,31 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
     public function action()
     {
         Exits::exit403If(
-            !Operator::currentOperatorHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
+            !Auth::currentUserHasAnyOfPermissions([\OLOG\Logger\Permissions::PERMISSION_PHPLOGGER_ACCESS])
         );
 
-        $html = \OLOG\CRUD\CRUDTable::html(
+        $html = CTable::html(
             \OLOG\Logger\Entry::class,
             '',
             [
-                new \OLOG\CRUD\CRUDTableColumn(
+                new TCol(
                     'Объект',
-                    new \OLOG\CRUD\CRUDTableWidgetText('{this->object_fullid}')
+                    new TWText('{this->object_fullid}')
                 ),
-                new \OLOG\CRUD\CRUDTableColumn(
+                new TCol(
                     'Дата создания',
-                    new \OLOG\CRUD\CRUDTableWidgetTimestamp('{this->created_at_ts}')
+                    new TWTimestamp('{this->created_at_ts}')
                 ),
-                new \OLOG\CRUD\CRUDTableColumn(
+                new TCol(
                     'Пользователь',
-                    new \OLOG\CRUD\CRUDTableWidgetTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
+                    new TWTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
                 )
             ],
             [
-                new \OLOG\CRUD\CRUDTableFilterLike('38947yt7ywssserkit22uy', 'Object Fullid', \OLOG\Logger\Entry::_OBJECT_FULLID),
+                new TFLikeInline('38947yt7ywssserkit22uy', 'Object Fullid', \OLOG\Logger\Entry::_OBJECT_FULLID),
             ],
             'created_at_ts desc',
-            '8273649529',
-            \OLOG\CRUD\CRUDTable::FILTERS_POSITION_TOP
+            '8273649529'
         );
 
         AdminLayoutSelector::render($html, $this);

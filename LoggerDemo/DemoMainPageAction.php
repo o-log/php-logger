@@ -2,16 +2,16 @@
 
 namespace LoggerDemo;
 
-use OLOG\FullObjectId;
-use OLOG\GETAccess;
+use OLOG\ActionInterface;
+use OLOG\GET;
 use OLOG\HTML;
-use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Logger\Admin\EntriesListAction;
 use OLOG\Logger\Admin\ObjectEntriesListAction;
+use OLOG\Model\FullObjectId;
 use OLOG\Redirects;
 
-class DemoMainPageAction implements InterfaceAction
+class DemoMainPageAction implements ActionInterface
 {
     const ACTION_ADD_MODEL = 'ACTION_ADD_MODEL';
     const ACTION_UPDATE_MODEL = 'ACTION_UPDATE_MODEL';
@@ -22,14 +22,14 @@ class DemoMainPageAction implements InterfaceAction
 
     public function action()
     {
-        if (GETAccess::getOptionalGetValue('a', '') == self::ACTION_ADD_MODEL){
+        if (GET::optional('a', '') == self::ACTION_ADD_MODEL){
             $new_model_obj = new LoggerDemoModel();
             $new_model_obj->save();
             Redirects::redirectToSelfNoGetForm();
         }
 
-        if (GETAccess::getOptionalGetValue('a', '') == self::ACTION_UPDATE_MODEL){
-            $model_id = GETAccess::getRequiredGetValue('model_id');
+        if (GET::optional('a', '') == self::ACTION_UPDATE_MODEL){
+            $model_id = GET::required('model_id');
 
             $new_model_obj = LoggerDemoModel::factory($model_id);
             $new_model_obj->setTitle(rand(100, 9999999));
@@ -38,6 +38,8 @@ class DemoMainPageAction implements InterfaceAction
         }
 
         $html = '';
+
+        $html .= '<p>set full access cookie (see config) before entering admin</p>';
 
         $html .= HTML::div('', '', function () {
             echo HTML::a((new EntriesListAction())->url(), 'all entries list');

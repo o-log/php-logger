@@ -2,21 +2,23 @@
 
 namespace OLOG\Logger\Admin;
 
+use OLOG\ActionInterface;
 use OLOG\Auth\Admin\UserEditAction;
-use OLOG\Auth\Operator;
+use OLOG\Auth\Auth;
 use OLOG\Auth\User;
-use OLOG\DB\DBWrapper;
+use OLOG\DB\DB;
 use OLOG\Exits;
 use OLOG\HTML;
-use OLOG\InterfaceAction;
 use OLOG\Layouts\AdminLayoutSelector;
-use OLOG\Layouts\InterfacePageTitle;
+use OLOG\Layouts\PageTitleInterface;
 use OLOG\Logger\Entry;
 use OLOG\Logger\Permissions;
+use OLOG\MaskActionInterface;
 
 class EntryEditAction extends LoggerAdminActionsBaseProxy implements
-    InterfaceAction,
-    InterfacePageTitle
+    ActionInterface,
+    PageTitleInterface,
+    MaskActionInterface
 {
     protected $entry_id;
 
@@ -30,7 +32,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
         return '/admin/logger/entry/' . $this->entry_id;
     }
 
-    static public function urlMask()
+    static public function mask()
     {
         return '/admin/logger/entry/(\d+)';
     }
@@ -48,7 +50,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
 
     public function action()
     {
-        Exits::exit403If(!Operator::currentOperatorHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS]));
+        Exits::exit403If(!Auth::currentUserHasAnyOfPermissions([Permissions::PERMISSION_PHPLOGGER_ACCESS]));
         $html = '';
         $html .= self::renderRecordHead($this->entry_id);
         $html .= self::delta($this->entry_id);
@@ -65,7 +67,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
 
         // находим предыдущую запись лога для этого объекта
 
-        $prev_record_id = DBWrapper::readField(
+        $prev_record_id = DB::readField(
             Entry::DB_ID,
             "SELECT " . Entry::_ID . " FROM " . Entry::DB_TABLE_NAME . " WHERE " . Entry::_ID . " < ? AND " . Entry::_OBJECT_FULLID . " = ? ORDER BY id DESC LIMIT 1",
             array($current_record_id, $current_record_obj->getObjectFullid())
@@ -217,13 +219,13 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
             */
 
             if (strlen($value) > 100) {
-                $html .= '<div style="padding: 5px 0px; border-bottom: 1px solid #ddd;">';
+                $html .= '<div style="padding: 5px 0; border-bottom: 1px solid #ddd;">';
 
                 $html .= '<div><b>' . $path_to_display . '</b></div>';
                 $html .= '<div><pre style="white-space: pre-wrap;">' . $value . '</pre></div>';
                 $html .= '</div>';
             } else {
-                $html .= '<div style="padding: 5px 0px; border-bottom: 1px solid #ddd;">';
+                $html .= '<div style="padding: 5px 0; border-bottom: 1px solid #ddd;">';
 
                 $html .= '<span style="padding-right: 50px;"><b>' . $path_to_display . '</b></span>';
                 $html .= $value;

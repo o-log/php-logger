@@ -2,8 +2,8 @@
 
 require_once '../vendor/autoload.php';
 
-\LoggerDemo\LoggerDemoConfig::init();
+\Config\Config::init();
 
 \OLOG\Logger\RegisterRoutes::registerRoutes();
 
-\OLOG\Router::processAction(\LoggerDemo\DemoMainPageAction::class, 0);
+\OLOG\Router::action(\LoggerDemo\DemoMainPageAction::class, 0);
