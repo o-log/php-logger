@@ -1,4 +1,9 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Oleg Loginov <olognv@gmail.com>
+ */
 
 namespace OLOG\Logger;
 
@@ -17,7 +22,8 @@ class Entry implements
     const _SERIALIZED_OBJECT = 'serialized_object';
     const _ID = 'id';
 
-    protected $created_at_ts; // initialized by constructor
+    const _CREATED_AT_TS = 'created_at_ts';
+    protected $created_at_ts;
     protected $user_fullid;
     protected $object_fullid;
     protected $serialized_object;

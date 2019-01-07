@@ -1,22 +1,24 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Oleg Loginov <olognv@gmail.com>
+ */
 
 namespace OLOG\Logger\Admin;
 
 use OLOG\Layouts\CurrentUserNameInterface;
 use OLOG\Layouts\MenuInterface;
+use OLOG\Layouts\RenderInLayoutInterface;
 use OLOG\Layouts\SiteTitleInterface;
 use OLOG\Layouts\TopActionObjInterface;
 use OLOG\Logger\LoggerConfig;
 
-class LoggerAdminActionsBaseProxy implements
-    MenuInterface,
-    TopActionObjInterface,
-    SiteTitleInterface,
-    CurrentUserNameInterface
+class LoggerAdminActionsBaseProxy
+    implements MenuInterface, TopActionObjInterface, SiteTitleInterface, CurrentUserNameInterface, RenderInLayoutInterface
 {
     static public function menuArr(){
         $admin_actions_base_classname = LoggerConfig::getAdminActionsBaseClassname();
-//        if (CheckClassInterfaces::classImplementsInterface($admin_actions_base_classname, InterfaceMenu::class)){
         if (is_a($admin_actions_base_classname, MenuInterface::class, true)){
             return $admin_actions_base_classname::menuArr();
         }
@@ -25,7 +27,6 @@ class LoggerAdminActionsBaseProxy implements
 
     public function topActionObj(){
         $admin_actions_base_classname = LoggerConfig::getAdminActionsBaseClassname();
-//        if (CheckClassInterfaces::classImplementsInterface($admin_actions_base_classname, InterfaceTopActionObj::class)){
         if (is_a($admin_actions_base_classname, TopActionObjInterface::class, true)){
             return (new $admin_actions_base_classname())->topActionObj();
         }
@@ -34,7 +35,6 @@ class LoggerAdminActionsBaseProxy implements
 
     public function siteTitle(){
         $admin_actions_base_classname = LoggerConfig::getAdminActionsBaseClassname();
-//        if (CheckClassInterfaces::classImplementsInterface($admin_actions_base_classname, InterfaceSiteTitle::class)){
         if (is_a($admin_actions_base_classname, SiteTitleInterface::class, true)){
             return (new $admin_actions_base_classname())->siteTitle();
         }
@@ -43,10 +43,16 @@ class LoggerAdminActionsBaseProxy implements
 
     public function currentUserName(){
         $admin_actions_base_classname = LoggerConfig::getAdminActionsBaseClassname();
-//        if (CheckClassInterfaces::classImplementsInterface($admin_actions_base_classname, InterfaceCurrentUserName::class)){
         if (is_a($admin_actions_base_classname, CurrentUserNameInterface::class, true)){
             return (new $admin_actions_base_classname())->currentUserName();
         }
         return '';
+    }
+
+    public function renderInLayout($html_or_callable){
+        $admin_actions_base_classname = LoggerConfig::getAdminActionsBaseClassname();
+        if (is_a($admin_actions_base_classname, RenderInLayoutInterface::class, true)){
+            (new $admin_actions_base_classname())->renderInLayout($html_or_callable);
+        }
     }
 }

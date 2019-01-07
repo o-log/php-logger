@@ -1,4 +1,9 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Oleg Loginov <olognv@gmail.com>
+ */
 
 namespace OLOG\Logger\Admin;
 
@@ -9,16 +14,14 @@ use OLOG\Auth\User;
 use OLOG\DB\DB;
 use OLOG\Exits;
 use OLOG\HTML;
-use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Layouts\PageTitleInterface;
 use OLOG\Logger\Entry;
 use OLOG\Logger\Permissions;
 use OLOG\MaskActionInterface;
 
-class EntryEditAction extends LoggerAdminActionsBaseProxy implements
-    ActionInterface,
-    PageTitleInterface,
-    MaskActionInterface
+class EntryEditAction
+    extends LoggerAdminActionsBaseProxy
+    implements ActionInterface, PageTitleInterface, MaskActionInterface
 {
     protected $entry_id;
 
@@ -56,7 +59,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
         $html .= self::delta($this->entry_id);
         $html .= self::renderObjectFields($this->entry_id);
 
-        AdminLayoutSelector::render($html, $this);
+        $this->renderInLayout($html);
     }
 
     static public function delta($current_record_id)
@@ -154,7 +157,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
     static public function getUserNameWithLinkByFullId($user_fullid)
     {
         $user_str = $user_fullid;
-        $user_fullid_arr = explode('.', $user_str);
+        $user_fullid_arr = explode('.', (string) $user_str);
         if (!array_key_exists(1, $user_fullid_arr)) {
             return $user_str;
         }
@@ -204,7 +207,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
             $path_to_display = $path;
 
             if (self::getPathWithoutLastElement($last_path) == self::getPathWithoutLastElement($path)) {
-                $elems = explode('.', $path);
+                $elems = explode('.', (string) $path);
                 $last_elem = array_pop($elems);
                 if (count($elems)) {
                     $path_to_display = '<span style="color: #999">' . implode('.', $elems) . '</span>.' . $last_elem;
@@ -247,7 +250,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
         }
 
         if (is_scalar($value_value)) {
-            return array($value_path => htmlentities($value_value));
+            return array($value_path => htmlentities((string) $value_value));
         }
 
         $value_as_array = null;
@@ -299,7 +302,7 @@ class EntryEditAction extends LoggerAdminActionsBaseProxy implements
 
     static public function getPathWithoutLastElement($path)
     {
-        $elems = explode('.', $path);
+        $elems = explode('.', (string) $path);
         array_pop($elems);
         return implode('.', $elems);
     }

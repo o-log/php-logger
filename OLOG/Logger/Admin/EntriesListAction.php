@@ -1,7 +1,11 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Oleg Loginov <olognv@gmail.com>
+ */
 
 namespace OLOG\Logger\Admin;
-
 
 use OLOG\ActionInterface;
 use OLOG\Auth\Auth;
@@ -12,12 +16,12 @@ use OLOG\CRUD\TWText;
 use OLOG\CRUD\TWTextWithLink;
 use OLOG\CRUD\TWTimestamp;
 use OLOG\Exits;
-use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Layouts\PageTitleInterface;
+use OLOG\Logger\Entry;
 
-class EntriesListAction extends LoggerAdminActionsBaseProxy implements
-    PageTitleInterface,
-    ActionInterface
+class EntriesListAction
+    extends LoggerAdminActionsBaseProxy
+    implements PageTitleInterface, ActionInterface
 {
 
     public function url()
@@ -37,29 +41,35 @@ class EntriesListAction extends LoggerAdminActionsBaseProxy implements
         );
 
         $html = CTable::html(
-            \OLOG\Logger\Entry::class,
+            Entry::class,
             '',
             [
                 new TCol(
                     'Объект',
-                    new TWText('{this->object_fullid}')
+                    new TWText(Entry::_OBJECT_FULLID)
                 ),
                 new TCol(
                     'Дата создания',
-                    new TWTimestamp('{this->created_at_ts}')
+                    new TWTimestamp(Entry::_CREATED_AT_TS)
                 ),
                 new TCol(
                     'Пользователь',
-                    new TWTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
+                    new TWTextWithLink(
+                        Entry::_USER_FULLID,
+                        //(new EntryEditAction('{this->id}'))->url()
+                        function(Entry $entry){
+                            return (new EntryEditAction($entry->getId()))->url();
+                        }
+                    )
                 )
             ],
             [
-                new TFLikeInline('38947yt7ywssserkit22uy', 'Object Fullid', \OLOG\Logger\Entry::_OBJECT_FULLID),
+                new TFLikeInline('38947yt7ywssserkit22uy', 'Object Fullid', Entry::_OBJECT_FULLID),
             ],
             'created_at_ts desc',
             '8273649529'
         );
 
-        AdminLayoutSelector::render($html, $this);
+        $this->renderInLayout($html);
     }
 }

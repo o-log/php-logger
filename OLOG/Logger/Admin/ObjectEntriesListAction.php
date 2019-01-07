@@ -1,4 +1,9 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Oleg Loginov <olognv@gmail.com>
+ */
 
 namespace OLOG\Logger\Admin;
 
@@ -11,14 +16,13 @@ use OLOG\CRUD\TWText;
 use OLOG\CRUD\TWTextWithLink;
 use OLOG\CRUD\TWTimestamp;
 use OLOG\Exits;
-use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Layouts\PageTitleInterface;
+use OLOG\Logger\Entry;
 use OLOG\MaskActionInterface;
 
-class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
-    PageTitleInterface,
-    ActionInterface,
-    MaskActionInterface
+class ObjectEntriesListAction
+    extends LoggerAdminActionsBaseProxy
+    implements PageTitleInterface, ActionInterface, MaskActionInterface
 {
     protected $object_fullid;
 
@@ -56,20 +60,26 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
         $object_fullid = $this->object_fullid;
 
         $html = CTable::html(
-            \OLOG\Logger\Entry::class,
+            Entry::class,
             '',
             [
                 new TCol(
                     'Объект',
-                    new TWText('{this->object_fullid}')
+                    new TWText(Entry::_OBJECT_FULLID)
                 ),
                 new TCol(
                     'Дата создания',
-                    new TWTimestamp('{this->created_at_ts}')
+                    new TWTimestamp(Entry::_CREATED_AT_TS)
                 ),
                 new TCol(
                     'Пользователь',
-                    new TWTextWithLink('{this->user_fullid}', (new EntryEditAction('{this->id}'))->url())
+                    new TWTextWithLink(
+                        Entry::_USER_FULLID,
+                        //(new EntryEditAction('{this->id}'))->url()
+                        function (Entry $entry){
+                            return (new EntryEditAction($entry->getId()))->url();
+                        }
+                    )
                 )
             ],
             [
@@ -78,6 +88,6 @@ class ObjectEntriesListAction extends LoggerAdminActionsBaseProxy implements
             'created_at_ts desc'
         );
 
-        AdminLayoutSelector::render($html, $this);
+        $this->renderInLayout($html);
     }
 }

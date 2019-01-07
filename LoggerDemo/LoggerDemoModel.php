@@ -1,4 +1,9 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Oleg Loginov <olognv@gmail.com>
+ */
 
 namespace LoggerDemo;
 
@@ -40,8 +45,9 @@ class LoggerDemoModel implements
         return $ids_arr;
     }
 
-    public function afterSave()
+    public function afterSave(): void
     {
+        $this->removeFromFactoryCache();
         Entry::logObjectEvent($this, 'save', FullObjectId::getFullObjectId(Auth::currentUserObj()));
     }
 

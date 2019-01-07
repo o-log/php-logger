@@ -1,17 +1,23 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Oleg Loginov <olognv@gmail.com>
+ */
 
 namespace LoggerDemo;
 
 use OLOG\ActionInterface;
 use OLOG\GET;
 use OLOG\HTML;
-use OLOG\Layouts\AdminLayoutSelector;
 use OLOG\Logger\Admin\EntriesListAction;
 use OLOG\Logger\Admin\ObjectEntriesListAction;
 use OLOG\Model\FullObjectId;
 use OLOG\Redirects;
 
-class DemoMainPageAction implements ActionInterface
+class DemoMainPageAction
+    extends LoggerDemoABase
+    implements ActionInterface
 {
     const ACTION_ADD_MODEL = 'ACTION_ADD_MODEL';
     const ACTION_UPDATE_MODEL = 'ACTION_UPDATE_MODEL';
@@ -39,7 +45,7 @@ class DemoMainPageAction implements ActionInterface
 
         $html = '';
 
-        $html .= '<p>set full access cookie (see config) before entering admin</p>';
+        $html .= '<p><a href="/auth/login">login before accessing admin</a></p>';
 
         $html .= HTML::div('', '', function () {
             echo HTML::a((new EntriesListAction())->url(), 'all entries list');
@@ -69,7 +75,6 @@ class DemoMainPageAction implements ActionInterface
             });
         }
 
-        AdminLayoutSelector::render($html, $this);
+        $this->renderInLayout($html);
     }
-
 }

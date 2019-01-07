@@ -6,9 +6,9 @@
     "php" : ">=7.2",
     "ext-json": "*",
     "o-log/php-router": "2.*",
-    "o-log/php-model": "8.*",
-    "o-log/php-crud": "7.*",
-    "o-log/php-auth": "4.*"
+    "o-log/php-model": "10.*",
+    "o-log/php-crud": "9.*",
+    "o-log/php-auth": "6.*"
   },
   "autoload" : {
     "psr-0" : {

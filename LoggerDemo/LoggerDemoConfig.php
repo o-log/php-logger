@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace LoggerDemo;
 
 use OLOG\Auth\AuthConfig;
 use OLOG\Cache\BucketRedis;
@@ -10,17 +10,16 @@ use OLOG\DB\ConnectorMySQL;
 use OLOG\DB\DBConfig;
 use OLOG\DB\Space;
 use OLOG\Logger\Entry;
-use OLOG\Logger\LoggerConstants;
+use OLOG\Logger\LoggerConfig;
 
-class Config
+class LoggerDemoConfig
 {
     const CONNECTOR_LOGGERDEMO = 'CONNECTOR_LOGGERDEMO';
     const SPACE_LOGGERDEMO = 'SPACE_LOGGERDEMO';
 
     static public function init(){
         date_default_timezone_set('Europe/Moscow');
-
-        AuthConfig::setFullAccessCookieName('shdfgklsdgf');
+        ini_set('assert.exception', true);
 
         DBConfig::setConnector(
             self::CONNECTOR_LOGGERDEMO,
@@ -43,5 +42,8 @@ class Config
                 [new RedisServer('localhost', 6379)]
             )
         );
+
+        AuthConfig::setAdminActionsBaseClassname(LoggerDemoABase::class);
+        LoggerConfig::setAdminActionsBaseClassname(LoggerDemoABase::class);
     }
 }
