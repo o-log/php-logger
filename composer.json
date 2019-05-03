@@ -10,11 +10,15 @@
     "o-log/php-crud": "9.*",
     "o-log/php-auth": "6.*"
   },
-  "autoload" : {
+  "autoload-dev" : {
     "psr-0" : {
       "Config" : "",
-      "OLOG" : "",
       "LoggerDemo" : ""
+    }
+  },
+  "autoload" : {
+    "psr-0" : {
+      "OLOG" : ""
     }
   }
 }
